@@ -4,6 +4,8 @@ Portfolio project for space domain awareness (SDA/SSA), low-thrust LEO operation
 
 This repository models a missed-thrust event on an operator spacecraft, searches candidate recovery trajectories in the local RTN frame, and screens the recovery options against a nearby CelesTrak-derived catalog using SGP4 miss-distance metrics.
 
+[Live Demo](https://adspaceengineeer.github.io/SSA-Missed-Thrust-Event-Impact-and-Recovery-Assessment/) | [Sample Results](examples/sample_run/run_summary.json)
+
 ![SSA-aware missed-thrust recovery search](examples/sample_run/ssa_aware_pareto.png)
 
 ## Why this matters

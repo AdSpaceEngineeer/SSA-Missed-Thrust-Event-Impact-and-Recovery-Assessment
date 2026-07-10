@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SSA Missed-Thrust Recovery Demo</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="rail" aria-label="Assessment steps">
+        <div class="brand">
+          <span class="brand-mark">SSA</span>
+          <div>
+            <h1>Missed-Thrust Recovery</h1>
+            <p>Static replay of the Tanager-1 sample assessment</p>
+          </div>
+        </div>
+        <nav class="step-list" id="stepList"></nav>
+        <section class="run-card">
+          <span class="run-label">Sample Run</span>
+          <strong id="runEpoch">Loading</strong>
+          <dl>
+            <div><dt>Catalog rows</dt><dd id="catalogRows">-</dd></div>
+            <div><dt>Search candidates</dt><dd id="candidateCount">-</dd></div>
+            <div><dt>Selected</dt><dd id="selectedCount">-</dd></div>
+          </dl>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">LEO conjunction-aware recovery workflow</p>
+            <h2 id="stepTitle">Choose Target Spacecraft</h2>
+          </div>
+          <a class="repo-link" href="https://github.com/AdSpaceEngineeer/SSA-Missed-Thrust-Event-Impact-and-Recovery-Assessment" target="_blank" rel="noreferrer">GitHub</a>
+        </header>
+
+        <section class="panel active" data-panel="target">
+          <div class="grid two">
+            <article class="control-panel">
+              <label for="targetSelect">Target spacecraft</label>
+              <select id="targetSelect">
+                <option selected>TANAGER-1 / NORAD 60507</option>
+              </select>
+              <div class="metric-grid">
+                <div><span>Mean motion</span><strong id="meanMotion">-</strong></div>
+                <div><span>Inclination</span><strong id="inclination">-</strong></div>
+                <div><span>Period</span><strong id="period">-</strong></div>
+                <div><span>Altitude band</span><strong id="altitudeBand">-</strong></div>
+              </div>
+            </article>
+            <article class="mission-panel">
+              <h3>Assessment Objective</h3>
+              <p>Evaluate post-outage recovery choices against a nearby active-object catalog before selecting an operationally attractive return-to-nominal trajectory.</p>
+              <div class="status-strip">
+                <span>Operator selected</span>
+                <span>Public GP/TLE source</span>
+                <span>RTN recovery model</span>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="tle">
+          <article class="terminal-card">
+            <div class="terminal-head">
+              <span>TLE record</span>
+              <button class="icon-button" id="copyTle" title="Copy TLE" aria-label="Copy TLE">Copy</button>
+            </div>
+            <pre id="tleBlock"></pre>
+          </article>
+        </section>
+
+        <section class="panel" data-panel="hyperparams">
+          <div class="grid two">
+            <article class="control-panel">
+              <h3>Conjunction Screening</h3>
+              <div class="slider-row">
+                <label for="catalogSize">Local catalog target</label>
+                <input id="catalogSize" type="range" min="10" max="1500" value="25" step="5" />
+                <output id="catalogSizeValue">25 objects</output>
+              </div>
+              <div class="slider-row">
+                <label for="windowOrbits">Screening window</label>
+                <input id="windowOrbits" type="range" min="1" max="6" value="2" step="1" />
+                <output id="windowOrbitsValue">2 orbits</output>
+              </div>
+              <div class="slider-row">
+                <label for="closeThreshold">Close-approach threshold</label>
+                <input id="closeThreshold" type="range" min="5" max="100" value="25" step="5" />
+                <output id="closeThresholdValue">25 km</output>
+              </div>
+            </article>
+            <article class="summary-panel">
+              <h3>Filter Gates</h3>
+              <dl class="dense-list">
+                <div><dt>Altitude overlap</dt><dd>100 km</dd></div>
+                <div><dt>Inclination delta</dt><dd>5 deg</dd></div>
+                <div><dt>RAAN delta</dt><dd>30 deg</dd></div>
+                <div><dt>Mean motion delta</dt><dd>0.35 rev/day</dd></div>
+              </dl>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="nearest">
+          <article class="table-panel">
+            <div class="panel-head">
+              <h3>Nearest Objects Preview</h3>
+              <span id="nearestCaption">ranked by baseline SGP4 miss distance</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Object</th>
+                    <th>NORAD</th>
+                    <th>Miss km</th>
+                    <th>TCA min</th>
+                    <th>Incl deg</th>
+                    <th>Mean motion</th>
+                  </tr>
+                </thead>
+                <tbody id="nearestRows"></tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+
+        <section class="panel" data-panel="propagation">
+          <div class="grid two">
+            <article class="timeline-panel">
+              <h3>CelesTrak + SGP4 Replay</h3>
+              <ol class="event-list" id="eventList"></ol>
+            </article>
+            <article class="summary-panel">
+              <h3>Propagation Outputs</h3>
+              <dl class="dense-list">
+                <div><dt>Raw active catalog</dt><dd id="rawCatalog">-</dd></div>
+                <div><dt>Prefiltered local catalog</dt><dd id="prefiltered">-</dd></div>
+                <div><dt>Screened with TLEs</dt><dd id="screened">-</dd></div>
+                <div><dt>Nearest baseline miss</dt><dd id="nearestMiss">-</dd></div>
+              </dl>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="search">
+          <div class="grid two">
+            <article class="table-panel">
+              <div class="panel-head">
+                <h3>Phase Guess Search Space</h3>
+                <span id="recoverableCount">- recoverable</span>
+              </div>
+              <div class="search-chart" id="searchChart" aria-label="Recovery search scatter plot"></div>
+            </article>
+            <article class="table-panel">
+              <div class="panel-head">
+                <h3>Selected Candidates</h3>
+                <span>Pareto sampled for SSA scoring</span>
+              </div>
+              <div class="candidate-list" id="candidateList"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="pareto">
+          <article class="plot-panel">
+            <div class="panel-head">
+              <h3>SSA-Aware Pareto Front</h3>
+              <span>terminal error vs ballistic time, colored by fuel proxy</span>
+            </div>
+            <img src="assets/ssa_aware_pareto.png" alt="SSA-aware Pareto front plot for missed-thrust recovery search" />
+          </article>
+        </section>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
