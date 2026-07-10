@@ -330,48 +330,6 @@ pre {
   white-space: pre-wrap;
 }
 
-.slider-row {
-  margin-top: 18px;
-}
-
-.preset-row {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px;
-  margin-top: 14px;
-  padding: 4px;
-  background: #0c141b;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-}
-
-.preset-button {
-  min-height: 36px;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  color: var(--muted);
-  background: transparent;
-  cursor: pointer;
-}
-
-.preset-button.active {
-  color: #061014;
-  background: var(--accent);
-  border-color: var(--accent);
-  font-weight: 750;
-}
-
-input[type="range"] {
-  width: 100%;
-  accent-color: var(--accent);
-}
-
-output {
-  display: block;
-  color: var(--accent);
-  font-weight: 700;
-}
-
 .table-wrap {
   overflow-x: auto;
 }
@@ -488,14 +446,13 @@ th {
 }
 
 .pareto-wrap {
-  min-height: 520px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: #080d12;
+  background: #000;
   overflow: hidden;
 }
 
-.pareto-wrap svg {
+.pareto-wrap img {
   display: block;
   width: 100%;
   height: auto;
@@ -553,10 +510,6 @@ th {
   }
 
   .run-card dl {
-    grid-template-columns: 1fr;
-  }
-
-  .preset-row {
     grid-template-columns: 1fr;
   }
 
