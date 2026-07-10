@@ -334,6 +334,33 @@ pre {
   margin-top: 18px;
 }
 
+.preset-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 14px;
+  padding: 4px;
+  background: #0c141b;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.preset-button {
+  min-height: 36px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+}
+
+.preset-button.active {
+  color: #061014;
+  background: var(--accent);
+  border-color: var(--accent);
+  font-weight: 750;
+}
+
 input[type="range"] {
   width: 100%;
   accent-color: var(--accent);
@@ -388,20 +415,23 @@ th {
   text-transform: uppercase;
 }
 
-.search-chart {
-  min-height: 360px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: #090f14;
-}
-
 .candidate-list {
   display: grid;
   gap: 10px;
+  margin-top: 18px;
+}
+
+.candidate-list.wide {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .candidate-card {
   padding: 12px;
+}
+
+.candidate-card.best {
+  border-color: var(--accent);
+  background: #10242a;
 }
 
 .candidate-card header {
@@ -429,14 +459,46 @@ th {
   font-size: 13px;
 }
 
-.plot-panel img {
-  display: block;
-  width: 100%;
-  max-height: 72vh;
-  object-fit: contain;
+.metric-grid.compact {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.metric-grid.compact div {
+  min-height: 76px;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 2px 8px;
+  border: 1px solid #36505f;
+  border-radius: 999px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.status-pill.watch {
+  border-color: var(--accent-2);
+  color: var(--accent-2);
+}
+
+.watch-row td {
+  background: rgba(245, 200, 91, 0.08);
+}
+
+.pareto-wrap {
+  min-height: 520px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: #000;
+  background: #080d12;
+  overflow: hidden;
+}
+
+.pareto-wrap svg {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 @media (max-width: 980px) {
@@ -454,6 +516,11 @@ th {
   }
 
   .grid.two {
+    grid-template-columns: 1fr;
+  }
+
+  .candidate-list.wide,
+  .metric-grid.compact {
     grid-template-columns: 1fr;
   }
 }
@@ -486,6 +553,10 @@ th {
   }
 
   .run-card dl {
+    grid-template-columns: 1fr;
+  }
+
+  .preset-row {
     grid-template-columns: 1fr;
   }
 

@@ -13,7 +13,7 @@
           <span class="brand-mark">SSA</span>
           <div>
             <h1>Missed-Thrust Recovery</h1>
-            <p>Static replay of the Tanager-1 sample assessment</p>
+            <p>Interactive replay of the Tanager-1 sample assessment</p>
           </div>
         </div>
         <nav class="step-list" id="stepList"></nav>
@@ -77,29 +77,34 @@
           <div class="grid two">
             <article class="control-panel">
               <h3>Conjunction Screening</h3>
+              <div class="preset-row" aria-label="Screening presets">
+                <button class="preset-button" data-preset="fast">Fast</button>
+                <button class="preset-button active" data-preset="balanced">Balanced</button>
+                <button class="preset-button" data-preset="conservative">Conservative</button>
+              </div>
               <div class="slider-row">
                 <label for="catalogSize">Local catalog target</label>
-                <input id="catalogSize" type="range" min="10" max="1500" value="25" step="5" />
+                <input id="catalogSize" type="range" min="5" max="25" value="15" step="5" />
                 <output id="catalogSizeValue">25 objects</output>
               </div>
               <div class="slider-row">
                 <label for="windowOrbits">Screening window</label>
-                <input id="windowOrbits" type="range" min="1" max="6" value="2" step="1" />
+                <input id="windowOrbits" type="range" min="1" max="3" value="2" step="1" />
                 <output id="windowOrbitsValue">2 orbits</output>
               </div>
               <div class="slider-row">
                 <label for="closeThreshold">Close-approach threshold</label>
-                <input id="closeThreshold" type="range" min="5" max="100" value="25" step="5" />
-                <output id="closeThresholdValue">25 km</output>
+                <input id="closeThreshold" type="range" min="50" max="2500" value="250" step="50" />
+                <output id="closeThresholdValue">250 km</output>
               </div>
             </article>
             <article class="summary-panel">
-              <h3>Filter Gates</h3>
+              <h3>Dynamic Screening Preview</h3>
               <dl class="dense-list">
-                <div><dt>Altitude overlap</dt><dd>100 km</dd></div>
-                <div><dt>Inclination delta</dt><dd>5 deg</dd></div>
-                <div><dt>RAAN delta</dt><dd>30 deg</dd></div>
-                <div><dt>Mean motion delta</dt><dd>0.35 rev/day</dd></div>
+                <div><dt>Objects in preview</dt><dd id="previewCount">-</dd></div>
+                <div><dt>Within time window</dt><dd id="windowCount">-</dd></div>
+                <div><dt>Under threshold</dt><dd id="thresholdCount">-</dd></div>
+                <div><dt>Nearest miss</dt><dd id="dynamicNearest">-</dd></div>
               </dl>
             </article>
           </div>
@@ -121,6 +126,7 @@
                     <th>TCA min</th>
                     <th>Incl deg</th>
                     <th>Mean motion</th>
+                    <th>Status</th>
                   </tr>
                 </thead>
                 <tbody id="nearestRows"></tbody>
@@ -142,37 +148,35 @@
                 <div><dt>Prefiltered local catalog</dt><dd id="prefiltered">-</dd></div>
                 <div><dt>Screened with TLEs</dt><dd id="screened">-</dd></div>
                 <div><dt>Nearest baseline miss</dt><dd id="nearestMiss">-</dd></div>
+                <div><dt>Estimated run time</dt><dd id="runtimeEstimate">-</dd></div>
               </dl>
             </article>
           </div>
         </section>
 
         <section class="panel" data-panel="search">
-          <div class="grid two">
-            <article class="table-panel">
-              <div class="panel-head">
-                <h3>Phase Guess Search Space</h3>
-                <span id="recoverableCount">- recoverable</span>
-              </div>
-              <div class="search-chart" id="searchChart" aria-label="Recovery search scatter plot"></div>
-            </article>
-            <article class="table-panel">
-              <div class="panel-head">
-                <h3>Selected Candidates</h3>
-                <span>Pareto sampled for SSA scoring</span>
-              </div>
-              <div class="candidate-list" id="candidateList"></div>
-            </article>
-          </div>
+          <article class="table-panel">
+            <div class="panel-head">
+              <h3>Post-MTE Recovery Search Space using Phase Guess</h3>
+              <span id="recoverableCount">- recoverable</span>
+            </div>
+            <div class="metric-grid compact">
+              <div><span>Candidate grid</span><strong id="phaseGrid">-</strong></div>
+              <div><span>Best terminal error</span><strong id="bestTerminal">-</strong></div>
+              <div><span>Lowest fuel proxy</span><strong id="lowestDv">-</strong></div>
+              <div><span>SSA-screened choices</span><strong id="ssaChoices">-</strong></div>
+            </div>
+            <div class="candidate-list wide" id="candidateList"></div>
+          </article>
         </section>
 
         <section class="panel" data-panel="pareto">
           <article class="plot-panel">
             <div class="panel-head">
               <h3>SSA-Aware Pareto Front</h3>
-              <span>terminal error vs ballistic time, colored by fuel proxy</span>
+              <span id="paretoCaption">terminal error vs ballistic time, colored by dynamic SSA risk</span>
             </div>
-            <img src="assets/ssa_aware_pareto.png" alt="SSA-aware Pareto front plot for missed-thrust recovery search" />
+            <div class="pareto-wrap" id="paretoPlot" aria-label="Dynamic SSA-aware Pareto plot"></div>
           </article>
         </section>
       </section>
