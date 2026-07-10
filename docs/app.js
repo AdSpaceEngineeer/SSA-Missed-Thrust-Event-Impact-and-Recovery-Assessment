@@ -67,6 +67,36 @@ const selectedCandidates = [
   { id: "out600_delay1800_rec900", outage: 600, ballisticMin: 40, recoveryMin: 15, terminalKm: 0.03437, velocityMps: 0.02025, deltaV: 0.00567, baseCandidateMissKm: 158.152, nearest: "ASTROCAST-0401" },
 ];
 
+const searchSpace = [
+  { id: "out30_delay0_rec900", outage: 30, ballisticMin: 0.5, terminalKm: 0.00058467, deltaV: 0.00566967, recoverable: true },
+  { id: "out30_delay600_rec900", outage: 30, ballisticMin: 10.5, terminalKm: 0.00057291, deltaV: 0.00566967, recoverable: true },
+  { id: "out30_delay1800_rec900", outage: 30, ballisticMin: 30.5, terminalKm: 0.00143054, deltaV: 0.00566967, recoverable: true },
+  { id: "out30_delay0_rec2100", outage: 30, ballisticMin: 0.5, terminalKm: 0.00487053, deltaV: 0.01322924, recoverable: true },
+  { id: "out30_delay600_rec2100", outage: 30, ballisticMin: 10.5, terminalKm: 0.00554981, deltaV: 0.01322924, recoverable: true },
+  { id: "out30_delay1800_rec2100", outage: 30, ballisticMin: 30.5, terminalKm: 0.00657832, deltaV: 0.01322924, recoverable: true },
+  { id: "out30_delay0_rec4200", outage: 30, ballisticMin: 0.5, terminalKm: 0.03508387, deltaV: 0.02645847, recoverable: false },
+  { id: "out30_delay600_rec4200", outage: 30, ballisticMin: 10.5, terminalKm: 0.03513765, deltaV: 0.02645847, recoverable: false },
+  { id: "out30_delay1800_rec4200", outage: 30, ballisticMin: 30.5, terminalKm: 0.0352776, deltaV: 0.02645847, recoverable: false },
+  { id: "out300_delay0_rec900", outage: 300, ballisticMin: 5, terminalKm: 0.0006746, deltaV: 0.00566967, recoverable: true },
+  { id: "out300_delay600_rec900", outage: 300, ballisticMin: 15, terminalKm: 0.00409594, deltaV: 0.00566967, recoverable: true },
+  { id: "out300_delay600_rec2100", outage: 300, ballisticMin: 15, terminalKm: 0.00126414, deltaV: 0.01322924, recoverable: true },
+  { id: "out300_delay0_rec2100", outage: 300, ballisticMin: 5, terminalKm: 0.0073962, deltaV: 0.01322924, recoverable: true },
+  { id: "out300_delay1800_rec900", outage: 300, ballisticMin: 35, terminalKm: 0.01481614, deltaV: 0.00566967, recoverable: true },
+  { id: "out300_delay1800_rec2100", outage: 300, ballisticMin: 35, terminalKm: 0.01312465, deltaV: 0.01322924, recoverable: true },
+  { id: "out300_delay0_rec4200", outage: 300, ballisticMin: 5, terminalKm: 0.02644014, deltaV: 0.02645847, recoverable: false },
+  { id: "out300_delay600_rec4200", outage: 300, ballisticMin: 15, terminalKm: 0.02841226, deltaV: 0.02645847, recoverable: false },
+  { id: "out300_delay1800_rec4200", outage: 300, ballisticMin: 35, terminalKm: 0.02833463, deltaV: 0.02645847, recoverable: false },
+  { id: "out600_delay0_rec900", outage: 600, ballisticMin: 10, terminalKm: 0.00310367, deltaV: 0.00566967, recoverable: true },
+  { id: "out600_delay600_rec900", outage: 600, ballisticMin: 20, terminalKm: 0.0111552, deltaV: 0.00566967, recoverable: true },
+  { id: "out600_delay0_rec2100", outage: 600, ballisticMin: 10, terminalKm: 0.00732256, deltaV: 0.01322924, recoverable: true },
+  { id: "out600_delay600_rec2100", outage: 600, ballisticMin: 20, terminalKm: 0.02021379, deltaV: 0.01322924, recoverable: true },
+  { id: "out600_delay600_rec4200", outage: 600, ballisticMin: 20, terminalKm: 0.00419244, deltaV: 0.02645847, recoverable: true },
+  { id: "out600_delay0_rec4200", outage: 600, ballisticMin: 10, terminalKm: 0.00721085, deltaV: 0.02645847, recoverable: true },
+  { id: "out600_delay1800_rec4200", outage: 600, ballisticMin: 40, terminalKm: 0.00671034, deltaV: 0.02645847, recoverable: true },
+  { id: "out600_delay1800_rec900", outage: 600, ballisticMin: 40, terminalKm: 0.03436887, deltaV: 0.00566967, recoverable: true },
+  { id: "out600_delay1800_rec2100", outage: 600, ballisticMin: 40, terminalKm: 0.04129369, deltaV: 0.01322924, recoverable: true },
+];
+
 const events = [
   ["request", "CelesTrak GP query for TANAGER-1 TLE by NORAD catalog ID 60507"],
   ["catalog", "Active catalog CSV parsed and normalized into orbital-element features"],
@@ -319,53 +349,158 @@ function renderCandidates() {
 }
 
 function renderParetoPlot() {
-  const candidates = dynamicCandidateMetrics();
-  const width = 900;
-  const height = 460;
-  const pad = 62;
-  const xs = candidates.map((candidate) => candidate.ballisticMin);
-  const ys = candidates.map((candidate) => candidate.terminalKm);
-  const risks = candidates.map((candidate) => candidate.riskProxy);
-  const minX = Math.min(...xs) - 1;
-  const maxX = Math.max(...xs) + 1;
-  const minY = 0;
-  const maxY = Math.max(...ys) * 1.22;
-  const maxRisk = Math.max(...risks, 0.001);
-  const sx = (x) => pad + ((x - minX) / (maxX - minX)) * (width - pad * 2);
-  const sy = (y) => height - pad - ((y - minY) / (maxY - minY)) * (height - pad * 2);
-  const colorForRisk = (risk) => {
-    const t = Math.min(risk / maxRisk, 1);
-    const hue = 174 - t * 126;
-    return `hsl(${hue}, 76%, 58%)`;
+  const dynamicCandidates = dynamicCandidateMetrics();
+  const pareto = dynamicCandidates.slice().sort((a, b) => a.ballisticMin - b.ballisticMin);
+  const width = 980;
+  const height = 620;
+  const plot = { left: 92, top: 70, right: 785, bottom: 505 };
+  const colorbar = { x: 825, y: plot.top, width: 28, height: plot.bottom - plot.top };
+  const xMin = 0;
+  const xMax = 42;
+  const yMin = 0;
+  const yMax = 0.043;
+  const dvMin = Math.min(...searchSpace.map((point) => point.deltaV));
+  const dvMax = Math.max(...searchSpace.map((point) => point.deltaV));
+  const sx = (x) => plot.left + ((x - xMin) / (xMax - xMin)) * (plot.right - plot.left);
+  const sy = (y) => plot.bottom - ((y - yMin) / (yMax - yMin)) * (plot.bottom - plot.top);
+  const palette = [
+    [68, 1, 84],
+    [72, 40, 120],
+    [62, 73, 137],
+    [49, 104, 142],
+    [38, 130, 142],
+    [31, 158, 137],
+    [53, 183, 121],
+    [109, 205, 89],
+    [180, 222, 44],
+    [253, 231, 37],
+  ];
+  const colorForDv = (value) => {
+    const t = Math.max(0, Math.min(1, (value - dvMin) / (dvMax - dvMin || 1)));
+    const scaled = t * (palette.length - 1);
+    const low = Math.floor(scaled);
+    const high = Math.min(palette.length - 1, low + 1);
+    const mix = scaled - low;
+    const rgb = palette[low].map((channel, index) => Math.round(channel + (palette[high][index] - channel) * mix));
+    return `rgb(${rgb.join(",")})`;
   };
-  const path = candidates.map((candidate, index) => `${index === 0 ? "M" : "L"} ${sx(candidate.ballisticMin)} ${sy(candidate.terminalKm)}`).join(" ");
-  const thresholdLineY = sy(Math.min(maxY, state.closeThreshold / 70000));
-  const points = candidates
-    .map(
-      (candidate) => `
+  const interpolatedDv = (x, y) => {
+    let numerator = 0;
+    let denominator = 0;
+    for (const point of searchSpace) {
+      const dx = (x - point.ballisticMin) / 9;
+      const dy = (y - point.terminalKm) / 0.009;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const weight = 1 / Math.max(distance ** 2.2, 0.025);
+      numerator += point.deltaV * weight;
+      denominator += weight;
+    }
+    return numerator / denominator;
+  };
+  const cells = [];
+  const xSteps = 44;
+  const ySteps = 30;
+  const cellWidth = (plot.right - plot.left) / xSteps + 0.4;
+  const cellHeight = (plot.bottom - plot.top) / ySteps + 0.4;
+  for (let ix = 0; ix < xSteps; ix += 1) {
+    for (let iy = 0; iy < ySteps; iy += 1) {
+      const x = xMin + ((ix + 0.5) / xSteps) * (xMax - xMin);
+      const y = yMin + ((iy + 0.5) / ySteps) * (yMax - yMin);
+      const rectX = plot.left + ix * ((plot.right - plot.left) / xSteps);
+      const rectY = plot.bottom - (iy + 1) * ((plot.bottom - plot.top) / ySteps);
+      cells.push(
+        `<rect x="${rectX}" y="${rectY}" width="${cellWidth}" height="${cellHeight}" fill="${colorForDv(interpolatedDv(x, y))}" opacity="0.92" />`,
+      );
+    }
+  }
+  const contourLines = [0.007, 0.011, 0.015, 0.019, 0.023, 0.026]
+    .map((level) => {
+      const near = searchSpace.filter((point) => Math.abs(point.deltaV - level) < 0.005);
+      const path = near
+        .sort((a, b) => a.ballisticMin - b.ballisticMin)
+        .map((point, index) => `${index === 0 ? "M" : "L"} ${sx(point.ballisticMin)} ${sy(point.terminalKm)}`)
+        .join(" ");
+      return path ? `<path d="${path}" fill="none" stroke="#f3d86a" stroke-width="0.8" opacity="0.28" />` : "";
+    })
+    .join("");
+  const searchDots = searchSpace
+    .map((point) => `<circle cx="${sx(point.ballisticMin)}" cy="${sy(point.terminalKm)}" r="3" fill="#b7e7d9" opacity="${point.recoverable ? 0.28 : 0.16}" />`)
+    .join("");
+  const paretoPath = pareto.map((candidate, index) => `${index === 0 ? "M" : "L"} ${sx(candidate.ballisticMin)} ${sy(candidate.terminalKm)}`).join(" ");
+  const paretoNodes = pareto
+    .map((candidate) => {
+      const x = sx(candidate.ballisticMin);
+      const y = sy(candidate.terminalKm);
+      const riskHalo = Math.min(10, candidate.riskProxy * 5);
+      return `
         <g>
-          <circle cx="${sx(candidate.ballisticMin)}" cy="${sy(candidate.terminalKm)}" r="${10 + candidate.riskProxy * 8}" fill="${colorForRisk(candidate.riskProxy)}" opacity="0.9" />
-          <circle cx="${sx(candidate.ballisticMin)}" cy="${sy(candidate.terminalKm)}" r="${14 + candidate.riskProxy * 8}" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.8" />
-          <text x="${sx(candidate.ballisticMin) + 14}" y="${sy(candidate.terminalKm) - 10}" fill="#eef5f7">${candidate.outage} s</text>
+          <circle cx="${x}" cy="${y}" r="${15 + riskHalo}" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.96" />
+          <circle cx="${x}" cy="${y}" r="9" fill="#0b1117" stroke="#ffffff" stroke-width="1.4" opacity="0.9" />
+          <text x="${x + (candidate.outage === 600 ? -8 : 12)}" y="${y - 10}" fill="#ffffff" font-size="13" text-anchor="${candidate.outage === 600 ? "end" : "start"}">${candidate.outage} s</text>
         </g>
-      `,
-    )
+      `;
+    })
+    .join("");
+  const colorbarStops = palette
+    .map((rgb, index) => `<stop offset="${(index / (palette.length - 1)) * 100}%" stop-color="rgb(${rgb.join(",")})" />`)
+    .join("");
+  const colorTicks = [dvMin, (dvMin + dvMax) / 2, dvMax]
+    .map((value) => {
+      const y = colorbar.y + colorbar.height - ((value - dvMin) / (dvMax - dvMin || 1)) * colorbar.height;
+      return `
+        <line x1="${colorbar.x + colorbar.width}" y1="${y}" x2="${colorbar.x + colorbar.width + 7}" y2="${y}" stroke="#d7e4e8" />
+        <text x="${colorbar.x + colorbar.width + 12}" y="${y + 4}" fill="#d7e4e8" font-size="12">${value.toFixed(3)}</text>
+      `;
+    })
+    .join("");
+  const yTicks = [0.005, 0.015, 0.025, 0.035]
+    .map((value) => {
+      const y = sy(value);
+      return `
+        <line x1="${plot.left}" y1="${y}" x2="${plot.right}" y2="${y}" stroke="#ffffff" opacity="0.12" />
+        <text x="${plot.left - 12}" y="${y + 4}" fill="#d7e4e8" text-anchor="end" font-size="12">${value.toFixed(3)}</text>
+      `;
+    })
+    .join("");
+  const xTicks = [0, 10, 20, 30, 40]
+    .map((value) => {
+      const x = sx(value);
+      return `
+        <line x1="${x}" y1="${plot.top}" x2="${x}" y2="${plot.bottom}" stroke="#ffffff" opacity="0.12" />
+        <text x="${x}" y="${plot.bottom + 24}" fill="#d7e4e8" text-anchor="middle" font-size="12">${value}</text>
+      `;
+    })
     .join("");
 
   document.getElementById("paretoCaption").textContent =
     `${state.catalogSize} objects, ${state.windowOrbits} orbit window, ${state.closeThreshold} km threshold`;
   document.getElementById("paretoPlot").innerHTML = `
     <svg viewBox="0 0 ${width} ${height}" role="img">
-      <rect x="0" y="0" width="${width}" height="${height}" fill="#080d12" />
-      <line x1="${pad}" y1="${height - pad}" x2="${width - pad}" y2="${height - pad}" stroke="#36505f" />
-      <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${height - pad}" stroke="#36505f" />
-      <line x1="${pad}" y1="${thresholdLineY}" x2="${width - pad}" y2="${thresholdLineY}" stroke="#f5c85b" stroke-dasharray="7 7" opacity="0.55" />
-      <path d="${path}" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.9" />
-      ${points}
-      <text x="${width / 2}" y="${height - 18}" fill="#9fb2bd" text-anchor="middle">Ballistic time (min)</text>
-      <text x="20" y="${height / 2}" fill="#9fb2bd" transform="rotate(-90 20 ${height / 2})" text-anchor="middle">Terminal distance from nominal (km)</text>
-      <text x="${pad}" y="34" fill="#eef5f7">Dynamic SSA-aware Pareto front</text>
-      <text x="${width - pad}" y="34" fill="#9fb2bd" text-anchor="end">color = risk proxy</text>
+      <defs>
+        <linearGradient id="deltaVScale" x1="0" x2="0" y1="1" y2="0">${colorbarStops}</linearGradient>
+        <clipPath id="plotClip"><rect x="${plot.left}" y="${plot.top}" width="${plot.right - plot.left}" height="${plot.bottom - plot.top}" /></clipPath>
+      </defs>
+      <rect x="0" y="0" width="${width}" height="${height}" fill="#03070a" />
+      <text x="${plot.left}" y="40" fill="#ffffff" font-size="18">Real-Time SSA Data based LEO Sat Missed-Thrust Recovery Search</text>
+      <g clip-path="url(#plotClip)">
+        ${cells.join("")}
+        ${contourLines}
+        ${searchDots}
+        <path d="${paretoPath}" fill="none" stroke="#ffffff" stroke-width="3.2" opacity="0.95" />
+        ${paretoNodes}
+      </g>
+      ${xTicks}
+      ${yTicks}
+      <rect x="${plot.left}" y="${plot.top}" width="${plot.right - plot.left}" height="${plot.bottom - plot.top}" fill="none" stroke="#d8e6eb" stroke-width="1" opacity="0.7" />
+      <text x="${(plot.left + plot.right) / 2}" y="${height - 40}" fill="#d7e4e8" text-anchor="middle" font-size="16">Ballistic time (min)</text>
+      <text x="28" y="${(plot.top + plot.bottom) / 2}" fill="#d7e4e8" transform="rotate(-90 28 ${(plot.top + plot.bottom) / 2})" text-anchor="middle" font-size="16">Distance from Nominal Trajectory (km)</text>
+      <rect x="${colorbar.x}" y="${colorbar.y}" width="${colorbar.width}" height="${colorbar.height}" fill="url(#deltaVScale)" stroke="#d8e6eb" opacity="0.96" />
+      ${colorTicks}
+      <text x="${colorbar.x + 78}" y="${(colorbar.y + colorbar.y + colorbar.height) / 2}" fill="#d7e4e8" transform="rotate(-90 ${colorbar.x + 78} ${(colorbar.y + colorbar.y + colorbar.height) / 2})" text-anchor="middle" font-size="14">Fuel Proxy: Extra delta-v (m/s)</text>
+      <g>
+        <circle cx="${plot.right - 180}" cy="${plot.top + 24}" r="9" fill="none" stroke="#ffffff" stroke-width="2.5" />
+        <text x="${plot.right - 160}" y="${plot.top + 29}" fill="#ffffff" font-size="13">Pareto front (SSA-aware)</text>
+      </g>
     </svg>
   `;
 }
