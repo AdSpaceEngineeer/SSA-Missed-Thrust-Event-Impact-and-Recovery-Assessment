@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ssa-missed-thrust-recovery"
+version = "0.1.0"
+description = "SSA-aware missed-thrust event impact and recovery assessment for low-thrust LEO operations."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Adhi Saxena" }]
+dependencies = [
+  "matplotlib>=3.8",
+  "numpy>=1.26",
+  "pandas>=2.1",
+  "requests>=2.31",
+  "sgp4>=2.23",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+ssa-mte = "ssa_mte.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
