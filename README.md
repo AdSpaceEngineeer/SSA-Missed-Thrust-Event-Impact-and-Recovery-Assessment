@@ -2,7 +2,7 @@
 
 Portfolio project for space domain awareness (SDA/SSA), low-thrust LEO operations, and conjunction-aware recovery planning.
 
-This repository turns Adhi Saxena's Colab prototype into a reproducible Python package and command-line workflow. It models a missed-thrust event on an operator spacecraft, searches candidate recovery trajectories in the local RTN frame, and screens the recovery options against a nearby CelesTrak-derived catalog using SGP4 miss-distance metrics.
+This repository models a missed-thrust event on an operator spacecraft, searches candidate recovery trajectories in the local RTN frame, and screens the recovery options against a nearby CelesTrak-derived catalog using SGP4 miss-distance metrics.
 
 ![SSA-aware missed-thrust recovery search](examples/sample_run/ssa_aware_pareto.png)
 
